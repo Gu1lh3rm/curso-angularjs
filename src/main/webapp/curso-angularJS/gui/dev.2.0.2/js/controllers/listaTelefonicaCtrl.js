@@ -4,6 +4,18 @@ angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($s
 	$scope.operadoras = operadoras.data;
 
 
+	var init = function () {
+		calcularImpostos($scope.contatos);
+        generateSerial($scope.contatos);
+    }
+
+
+    var calcularImpostos = function (contatos) {
+		contatos.forEach(function (contato) {
+			contato.operadora.precoComImposto = calcularImposto(contato.operadora.operadora_preco);
+        })
+    }
+
 	var generateSerial = function (contatos) {
 		contatos.forEach(function (item) {
 			item.serial = serialGenerator.generate();
@@ -31,9 +43,12 @@ angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($s
 
 			}
 		});
+		$scope.verificarContatoSelecionado($scope.contatos);
 	};
-	$scope.isContatoSelecionado = function (contatos) {
-		return contatos.some(function (contato) {
+
+	//$scope.isContatoSelecionado = function (contatos) {
+	$scope.verificarContatoSelecionado= function (contatos) {
+		$scope.hasContatoSelecionado = contatos.some(function (contato) {
 			return contato.selecionado;
 		});
 	};
@@ -41,11 +56,13 @@ angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($s
 		$scope.criterioDeOrdenacao = campo;
 		$scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
 	};
-	
-	generateSerial($scope.contatos);
 
-	$scope.calcularImposto = function (operadora_preco) {
+
+	var calcularImposto = function (operadora_preco) {
+
         var imposto = 1.2;
         return operadora_preco * imposto;
     }
+
+    init();
 });

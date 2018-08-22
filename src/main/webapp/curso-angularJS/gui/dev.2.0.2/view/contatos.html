@@ -31,12 +31,12 @@
 			<th>Data</th>
 		</tr>
 		<tr ng-class="{'selecionado negrito': contato.selecionado}" ng-repeat="contato in contatos | filter:criterioDeBusca | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
-			<td><input type="checkbox" ng-model="contato.selecionado" /></td>
+			<td><input type="checkbox" ng-model="contato.selecionado" ng-click="verificarContatoSelecionado(contatos)"/></td>
 			<td><a href="#/detalhesContato/{{contato.contato_id}}">{{contato.contato_nome
 					| name}}</a></td>
 			<td>{{contato.contato_telefone}}</td>
 			<td>{{contato.operadora.operadora_nome}}</td>
-			<td>{{calcularImposto(contato.operadora.operadora_preco) | currency}}</td>
+			<td>{{contato.operadora.precoComImposto | currency}}</td>
 			<td>{{contato.contato_data | date:'dd/MM/yyyy'}}</td>
 		</tr>
 	</table>
@@ -45,5 +45,6 @@
 		Contato</a>
 	<button class="btn btn-danger btn-block"
 		ng-click="apagarContatos(contatos)"
-		ng-if="isContatoSelecionado(contatos)">Apagar Contatos</button>
+		ng-if="hasContatoSelecionado">Apagar Contatos</button>
+		<!--ng-if="isContatoSelecionado(contatos)">Apagar Contatos</button>-->
 </div>
