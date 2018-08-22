@@ -29,23 +29,23 @@ import angularjs.repositories.OperadoraRepository;
 			return operadoraRepository.findAll();
 		}
 
-		@GetMapping("/operadora/{operadora_id}")
+		@GetMapping("/operadoras/{operadora_id}")
 		public Optional<Operadora> getOperadora(@PathVariable Long operadora_id) {
 			return operadoraRepository.findById(operadora_id);
 		}
 
-		@DeleteMapping("/operadora/{operadora_id}")
+		@DeleteMapping("/operadoras/{operadora_id}")
 		public boolean deleteOperadora(@PathVariable Operadora operadora_id) {
 			operadoraRepository.delete(operadora_id);
 			 return true;
 		}
 
-		@PutMapping("/operadora")
+		@PutMapping("/operadoras")
 		public Operadora updateContato(@RequestBody Operadora operadora_id) {
 			return operadoraRepository.save(operadora_id);
 		}
 
-		@PostMapping("/operadora")
+		@PostMapping("/operadoras")
 		public Operadora createOperadora(@RequestBody Operadora operadora) {
 			return operadoraRepository.save(operadora);
 		}

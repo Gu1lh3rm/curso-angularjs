@@ -34,23 +34,23 @@ import angularjs.repositories.ContatoRepository;
 		}	
 		
 		
-		@GetMapping("/contato/{contato_id}")
+		@GetMapping("/contatos/{contato_id}")
 		public Optional<Contato> getContato(@PathVariable Long contato_id) {
 			return contatoRepository.findById(contato_id);
 		}
 
-		@DeleteMapping("/contato/{contato_id}")
+		@DeleteMapping("/contatos/{contato_id}")
 		public boolean deleteContato(@PathVariable Contato contato_id) {
 			contatoRepository.delete(contato_id);
 			 return true;
 		}
 
-		@PutMapping("/contato")
+		@PutMapping("/contatos")
 		public Contato updateContato(@RequestBody Contato contato_id) {
 			return contatoRepository.save(contato_id);
 		}
 
-		@PostMapping("/contato")
+		@PostMapping("/contatos")
 		public Contato createContato(@RequestBody Contato contato) {
 			return contatoRepository.save(contato);
 		}
