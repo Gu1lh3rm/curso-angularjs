@@ -36,7 +36,7 @@
 					| name}}</a></td>
 			<td>{{contato.contato_telefone}}</td>
 			<td>{{contato.operadora.operadora_nome}}</td>
-			<td>{{contato.operadora.operadora_preco | currency}}</td>
+			<td>{{calcularImposto(contato.operadora.operadora_preco) | currency}}</td>
 			<td>{{contato.contato_data | date:'dd/MM/yyyy'}}</td>
 		</tr>
 	</table>
