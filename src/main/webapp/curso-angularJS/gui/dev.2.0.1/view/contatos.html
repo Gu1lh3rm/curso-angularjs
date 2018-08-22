@@ -20,8 +20,7 @@
 
 	<hr/>
 
-	<input class="form-control" type="text" ng-model="criterioDeBusca"
-		placeholder="O que você está buscando?" />
+	<input class="form-control" type="text" ng-model="criterioDeBusca" placeholder="O que você está buscando?" />
 	<table ng-show="contatos.length > 0" class="table table-striped">
 		<tr>
 			<th></th>
@@ -30,10 +29,9 @@
 			<th>Operadora</th>
 			<th>Data</th>
 		</tr>
-		<tr ng-class="{'selecionado negrito': contato.selecionado}"
-			ng-repeat="contato in contatos | filter:criterioDeBusca | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
+		<tr ng-class="{'selecionado negrito': contato.selecionado}" ng-repeat="contato in contatos | filter:criterioDeBusca | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
 			<td><input type="checkbox" ng-model="contato.selecionado" /></td>
-			<td><a href="#/detalhesContato/{{contato.contato_id}}">{{contato.contato_nome
+			<td><a href="#/detalhesContato/{{contato.contato_id + 4 }}">{{contato.contato_nome
 					| name}}</a></td>
 			<td>{{contato.contato_telefone}}</td>
 			<td>{{contato.operadora.operadora_nome}}</td>
