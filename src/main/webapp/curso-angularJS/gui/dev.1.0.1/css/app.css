@@ -1,0 +1,24 @@
+.jumbotron {
+    width: 800px;
+    text-align: center;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+.form-control{
+    margin-bottom: 5px;
+    text-align: center;
+}
+.selecionado {
+    background-color: lightblue;
+}
+.negrito {
+    font-weight: bold;
+}
+.classContatoForm{
+    text-align: center
+}
+.formatandoNumero{
+    text-align: center
+}

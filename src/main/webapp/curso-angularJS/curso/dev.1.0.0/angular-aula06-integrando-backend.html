@@ -1,0 +1,168 @@
+<html ng-app="listaTelefonica">
+    <head>
+        <meta charset="UTF-8">
+        <title>AngularJS - #6 - Integrando com o back-end por AJAX - Rodrigo Branas</title>
+        <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css">
+        <style>
+            .jumbotron {
+                width: 800px;
+                text-align: center;
+                margin-top: 20px;
+                margin-left: auto;
+                margin-right: auto;
+
+            }
+            .form-control{
+                margin-bottom: 5px;
+            }
+            .selecionado {
+                background-color: yellow;
+            }
+            .negrito {
+                font-weight: bold;
+            }
+            .classContatoForm{
+                text-align: center
+            }
+            .formatandoNumero{
+            	text-align: center
+            }
+        </style>
+        <script src="lib/angularjs/angular.js"></script>
+        <script src="lib/angularjs/angular-locale_pt-br.js"></script>
+        <script src="lib/angularjs/angular-messages.js"></script>
+        <script>
+            angular.module("listaTelefonica", ["ngMessages"]);
+            angular.module("listaTelefonica")
+            .controller("listaTelefonicaCtrl",
+            function ($scope, $http) {
+                $scope.app = "Lista Telefonica"; 
+                $scope.contatos = [];
+                $scope.operadoras = [];
+                
+       			var httpContatos = "http://localhost:8080/api/contatos";
+       		    var httpOperadoras =  "http://localhost:8080/api/operadoras";
+                
+                var carregarContatos = function () {
+                	$http.get(httpContatos).then(
+                	function (response) {
+                		$scope.contatos = response.data;
+                	});
+                }
+                
+                var carregarOperadoras = function () {
+                	$http.get(httpOperadoras).then(
+                	function (response){
+                		$scope.operadoras = response.data;	
+                	});
+                }
+                
+               $scope.adicionarContato = function (contato){
+                    contato.contato_data = new Date();
+                    contato.operadora_id = contato.operadora.operadora_id;
+            	   //contato.cor = "blue";    
+                                   
+                   $http.put("http://localhost:8080/api/contato", contato
+            	   ).then(function (data){
+            		   $scope.contatos.push(angular.copy(contato));
+                       delete $scope.contato;
+                       $scope.contatoForm.$setPristine();
+            	   }).catch(function(data,status){
+                       	$scope.message = "Erro ao gravar o contato: " + message;
+                   });
+               }
+                
+                $scope.apagarContato = function(contatos){
+                    
+                    $scope.contatos = contatos.filter(function (contato){
+                        if(!contato.selecionado){
+                            return contato;
+                        } else{
+                            console.log(contato.contato_id);
+                            
+                            $http.delete("http://localhost:8080/api/contato/"+contato.contato_id)
+                            .then(function (){
+                                console.log("true");
+                            }).catch(function(status){
+                                    $scope.message = "Erro ao deletar o contato: " + message;
+                            });
+
+                        }
+                    });
+                }
+                $scope.isContatoSelecionado = function(contatos){
+                   return contatos.some(function (contato) {
+                       return contato.selecionado;
+                   })
+                }
+                $scope.classe1 = "selecionado";
+                $scope.classe2 = "negrito";
+                $scope.ordenarPor = function (campo) {
+                	$scope.criterioDeOrdenacao = campo;
+                	$scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
+                }
+                
+                carregarContatos();
+                carregarOperadoras();
+            });
+        </script>
+    </head>
+    <body ng-controller="listaTelefonicaCtrl">
+        <div class="jumbotron">
+            <h4>{{app}}</h4>
+            <input class="form-control" type="text" ng-model="criterioDeBusca" placeholder="Oque você está buscando"/>
+            <table ng-show="contatos.length > 0" class="table">
+                <tr>
+                    <th></th>
+                    <th><a href="" ng-click="ordenarPor('nome')">Nome</a></th>
+                    <th><a href="" ng-click="ordenarPor('telefone')">Telefone</a></th>
+                    <th><a href="" ng-click="ordenarPor('operadora')">Operadora</a></th>
+                    <th><a href="" ng-click="ordenarPor('data')">Data</a></th>
+                    <th></th>
+                </tr>
+                <tr ng-class="{selecionado: contato.selecionado, negrito: contato.selecionado}" ng-repeat="contato in contatos | filter:{nome: criterioDeBusca} | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
+                    <td><input type="checkbox" ng-model="contato.selecionado"/></td>
+                    <td>{{contato.contato_nome}}</td>
+                    <td>{{contato.contato_telefone}}</td>
+                    <td>{{contato.operadora.operadora_nome | lowercase}}</td>
+                    <td>{{contato.contato_data | date:'MMM MMMM EEEE EEE dd/MM/yyyy HH:mm'}}</td>
+                    <td><div style="width: 20px; height: 20px" ng-style="{'background-color': contato.cor}"></div></td>
+                </tr>
+            </table>
+            <hr/>  
+            {{message}}
+            <form name="contatoForm">
+                <input class="form-control" type="text" ng-model="contato.contato_nome" name="nome" placeholder="Nome" ng-required="true" ng-minlength="10"/>
+                <input class="form-control" type="text" ng-model="contato.contato_telefone" name="telefone" placeholder="Telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/"/>
+                <select class="form-control" ng-model="contato.operadora" name="operadora" ng-options="operadora.operadora_nome + ' ( ' + (operadora.operadora_preco | currency) + ' )' group by operadora.opeardora_categoria for operadora in operadoras | orderBy:'nome'" ng-required="true">
+                    <option value="">Selecione a operadora</option>
+                </select>
+            </form>
+            <div ng-show="contatoForm.nome.$invalid && contatoForm.nome.$dirty" ng-messages="contatoForm.nome.$error"  class="alert alert-danger">
+                 <div ng-message="required">
+	            	Por favor, preencha o campo nome!
+	            </div>
+	            
+	            <div ng-message="minlength">
+	            	O campo nome deve ter no mínimo 10 caracteres.
+	            </div>
+	        </div> 
+	        <div ng-show="contatoForm.telefone.$error.pattern || contatoForm.contato.$invalid || contatoForm.contato.$dirty" ng-messages="contatoForm.telefone.$error" class="alert alert-danger">
+	        
+	        	<div ng-message="required">
+	            	Por favor, preencha o campo telefone!
+	            </div>
+	             <div ng-message="pattern">
+	            	O campo telefone deve ter o formato DDDDD-DDDDD
+	            </div>
+	        </div>    
+	            <div ng-show="contatoForm.operadora.$invalid && contatoForm.operadora.$dirty" class="alert alert-danger">
+	            	Por favor, preencha o campo operadora!
+	            </div>
+	        <button class="btn btn-primary btn-block" ng-click="adicionarContato(contato)" ng-disabled="contatoForm.$invalid">Adicionar Contato</button>
+            <button class="btn btn-danger btn-block" ng-click="apagarContato(contatos)" ng-show="isContatoSelecionado(contatos)">Apagar Contato</button> 
+        </div>
+        <div ng-include="'footer.html'"></div> 
+        <div class="formatandoNumero">{{ 100.2 | number : 2}}</div>       
+    </body>
+</html>
